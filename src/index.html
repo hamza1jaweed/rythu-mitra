@@ -1,0 +1,47 @@
+<title>Rythu Mitra</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="19" fill="#D99A00"/>
+        <path d="M20 31V17" stroke="#15251B" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M20 20c-6 0-9-4-9-9 6 0 9 4 9 9z" fill="#1D6A3A"/>
+        <path d="M20 17c0-6 4-9 9-9 0 6-4 9-9 9z" fill="#2E8B4E"/>
+        <path d="M11 31h18" stroke="#15251B" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <div><h1 data-t="appName">Rythu Mitra</h1><p data-t="tagline"></p></div>
+    </div>
+    <button class="lang" id="lang" type="button">తెలుగు</button>
+  </div>
+</header>
+
+<section class="field" aria-label="My field">
+  <div class="wrap">
+    <label class="f"><span data-t="crop"></span><select id="crop"></select></label>
+    <label class="f"><span data-t="district"></span><select id="district"></select></label>
+    <label class="f"><span data-t="acres"></span><input id="acres" type="number" min="0.25" max="100" step="0.25" value="2"></label>
+    <span class="season" data-t="season"></span>
+  </div>
+</section>
+
+<div class="tabline"><nav class="wrap tabs" role="tablist" id="tabs"></nav></div>
+
+<main class="wrap">
+  <section class="panel" id="p-doctor" role="tabpanel"></section>
+  <section class="panel" id="p-weather" role="tabpanel" hidden></section>
+  <section class="panel" id="p-fert" role="tabpanel" hidden></section>
+  <section class="panel" id="p-mandi" role="tabpanel" hidden></section>
+</main>
+
+<footer><div class="wrap" data-t="footer"></div></footer>
+
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>

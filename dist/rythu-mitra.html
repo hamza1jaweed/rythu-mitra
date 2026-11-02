@@ -1,0 +1,961 @@
+<title>Rythu Mitra</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: phone-first app shell — green field header, "my field" strip, tabbed panels, bottom tab bar on phones */
+:root {
+  --bg: #F1F5EF;          /* field-mist neutral, green-biased */
+  --surface: #FFFFFF;
+  --ink: #15251B;
+  --muted: #56685C;
+  --line: #D6E0D6;
+  --leaf: #1D6A3A;        /* paddy green */
+  --leaf-soft: #E2EFE5;
+  --on-leaf: #FFFFFF;
+  --turmeric: #D99A00;    /* accent */
+  --turmeric-soft: #FBF1D3;
+  --ok: #1E7A3E;  --ok-soft: #E1F2E6;
+  --warn: #9A5B00; --warn-soft: #FCEFD8;
+  --bad: #B3261E;  --bad-soft: #FBE4E1;
+  --display: "Baloo Tammudu 2", "Noto Sans Telugu", system-ui, sans-serif;
+  --body: "Noto Sans", "Noto Sans Telugu", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1611; --surface: #16211A; --ink: #E5EEE7; --muted: #9AAE9F; --line: #2A3B30;
+    --leaf: #5DBB7C; --leaf-soft: #1C3324; --on-leaf: #0B140E;
+    --turmeric: #F2C14E; --turmeric-soft: #362C12;
+    --ok: #6CCB8A; --ok-soft: #173322; --warn: #F0B65A; --warn-soft: #3A2A10; --bad: #F28B82; --bad-soft: #3D1916;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1611; --surface: #16211A; --ink: #E5EEE7; --muted: #9AAE9F; --line: #2A3B30;
+  --leaf: #5DBB7C; --leaf-soft: #1C3324; --on-leaf: #0B140E;
+  --turmeric: #F2C14E; --turmeric-soft: #362C12;
+  --ok: #6CCB8A; --ok-soft: #173322; --warn: #F0B65A; --warn-soft: #3A2A10; --bad: #F28B82; --bad-soft: #3D1916;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Header */
+.top { background: var(--leaf); color: var(--on-leaf); }
+.top .wrap { display: flex; align-items: center; gap: 14px; padding-block: 14px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.brand svg { width: 40px; height: 40px; flex: none; }
+.brand h1 { font-family: var(--display); font-weight: 700; font-size: 1.6rem; line-height: 1; margin: 0; letter-spacing: .01em; }
+.brand p { margin: 2px 0 0; font-size: .82rem; opacity: .85; }
+.lang { font-family: var(--display); font-weight: 600; font-size: 1rem; background: var(--turmeric); color: #1B1400; border: 0; border-radius: 999px; padding: 7px 16px; cursor: pointer; }
+.lang:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--turmeric); outline-offset: 2px; }
+
+/* My field strip */
+.field { background: var(--surface); border-bottom: 1px solid var(--line); }
+.field .wrap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 12px; padding-block: 12px; align-items: end; }
+label.f { display: grid; gap: 4px; font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+select, input[type=number] { font: inherit; font-size: .95rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; text-transform: none; letter-spacing: 0; }
+.season { font-family: var(--mono); font-size: .78rem; background: var(--turmeric-soft); color: var(--ink); border-radius: 6px; padding: 8px 10px; white-space: nowrap; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; padding-block: 14px 0; }
+.tab { font: inherit; font-weight: 600; font-size: .95rem; background: transparent; color: var(--muted); border: 0; border-bottom: 3px solid transparent; padding: 10px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.tab svg { width: 18px; height: 18px; }
+.tab[aria-selected=true] { color: var(--leaf); border-bottom-color: var(--leaf); }
+.tabline { border-bottom: 1px solid var(--line); }
+
+main { padding-block: 22px 40px; }
+.panel h2 { font-family: var(--display); font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0 0 4px; text-wrap: balance; }
+.hint { color: var(--muted); margin: 0 0 18px; max-width: 65ch; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
+.chip.sample { background: var(--turmeric-soft); color: var(--warn); }
+.cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 22px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; }
+.muted { color: var(--muted); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Crop doctor */
+.sym { display: grid; gap: 8px; }
+.sym button { font: inherit; text-align: left; display: flex; gap: 10px; align-items: flex-start; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+.sym button .box { flex: none; width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--line); margin-top: 2px; display: grid; place-items: center; }
+.sym button[aria-pressed=true] { border-color: var(--leaf); background: var(--leaf-soft); }
+.sym button[aria-pressed=true] .box { background: var(--leaf); border-color: var(--leaf); }
+.sym button[aria-pressed=true] .box::after { content: ""; width: 9px; height: 5px; border: 2px solid var(--on-leaf); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.symhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.link { font: inherit; font-size: .85rem; background: none; border: 0; color: var(--leaf); cursor: pointer; text-decoration: underline; padding: 0; }
+
+.dx { display: grid; gap: 14px; }
+.dx-main { border: 2px solid var(--leaf); }
+.dx-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.dx-name { font-family: var(--display); font-weight: 700; font-size: 1.35rem; line-height: 1.15; }
+.dx-sub { font-size: .9rem; color: var(--muted); }
+.meter { min-width: 84px; text-align: right; }
+.meter b { font-family: var(--mono); font-size: 1.6rem; display: block; line-height: 1; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.bar i { display: block; height: 100%; background: var(--leaf); border-radius: 3px; }
+.lvl-high { color: var(--ok); } .lvl-medium { color: var(--warn); } .lvl-low { color: var(--muted); }
+.dx h4 { font-size: .74rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 14px 0 6px; }
+.dx ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.dx p { margin: 0; }
+.alt { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.alt .dx-name { font-size: 1.05rem; }
+.safety { background: var(--turmeric-soft); border-radius: 10px; padding: 12px 14px; font-size: .86rem; }
+.empty { border: 1px dashed var(--line); border-radius: var(--r); padding: 28px 18px; text-align: center; color: var(--muted); }
+
+/* Weather */
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.day { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 6px; align-content: start; }
+.day .d { font-weight: 700; font-size: .85rem; }
+.day .t { font-family: var(--mono); font-size: .8rem; color: var(--muted); }
+.v { font-size: .75rem; font-weight: 700; border-radius: 6px; padding: 4px 6px; text-align: center; }
+.v.ok { background: var(--ok-soft); color: var(--ok); } .v.caution { background: var(--warn-soft); color: var(--warn); } .v.no { background: var(--bad-soft); color: var(--bad); }
+.day .why { font-size: .74rem; color: var(--muted); line-height: 1.35; }
+.day.ok { border-top: 4px solid var(--ok); } .day.caution { border-top: 4px solid var(--warn); } .day.no { border-top: 4px solid var(--bad); }
+.tips { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tips li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+.tips li .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; }
+.dot.warn { background: var(--warn); } .dot.info { background: var(--leaf); } .dot.ok { background: var(--ok); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { padding: 8px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+th { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+td input[type=number] { width: 64px; padding: 5px 6px; font-family: var(--mono); font-size: .85rem; }
+.wxgrid { display: grid; gap: 22px; margin-top: 22px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+h3 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 0 0 10px; }
+
+/* Fertilizer */
+.npk { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
+.big { font-family: var(--mono); font-size: 1.9rem; font-weight: 600; line-height: 1; }
+td.r, th.r { text-align: right; }
+tr.total td { font-weight: 700; border-bottom: 0; }
+.splits { background: var(--leaf-soft); border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: .9rem; }
+
+/* Mandi */
+.inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.best { display: grid; gap: 4px; }
+.best .big { color: var(--leaf); }
+tr.top td { background: var(--leaf-soft); font-weight: 600; }
+.tag { font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+.tag.below { background: var(--bad-soft); color: var(--bad); } .tag.above { background: var(--ok-soft); color: var(--ok); }
+.alert { background: var(--bad-soft); color: var(--ink); border-left: 4px solid var(--bad); border-radius: 8px; padding: 12px 14px; margin-top: 14px; }
+.mspbox { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 10px; margin-top: 10px; }
+svg.spark { width: 84px; height: 26px; display: block; }
+.up { color: var(--ok); } .down { color: var(--bad); }
+
+footer { color: var(--muted); font-size: .8rem; padding-block: 18px 90px; border-top: 1px solid var(--line); }
+
+/* Phone */
+@media (max-width: 760px) {
+  .field .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .season { grid-column: 1 / -1; text-align: center; }
+  .cols, .wxgrid { grid-template-columns: minmax(0, 1fr); }
+  .days { grid-template-columns: minmax(0, 1fr); }
+  .day { grid-template-columns: 76px 1fr; align-items: center; column-gap: 12px; }
+  .day .why { grid-column: 2; }
+  .tabs { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
+          padding: 4px max(4px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(4px, env(safe-area-inset-left, 0px)); gap: 0; }
+  .tab { flex: 1; flex-direction: column; gap: 2px; font-size: .68rem; padding: 6px 2px; border-bottom: 0; border-top: 3px solid transparent; text-align: center; }
+  .tab[aria-selected=true] { border-top-color: var(--leaf); background: var(--leaf-soft); border-radius: 8px; }
+  .tab svg { width: 22px; height: 22px; }
+  .tabline { border: 0; }
+  .npk { grid-template-columns: minmax(0, 1fr); }
+  .brand h1 { font-size: 1.35rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bar i { transition: width .35s ease; }
+  .sym button { transition: background .15s, border-color .15s; }
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="19" fill="#D99A00"/>
+        <path d="M20 31V17" stroke="#15251B" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M20 20c-6 0-9-4-9-9 6 0 9 4 9 9z" fill="#1D6A3A"/>
+        <path d="M20 17c0-6 4-9 9-9 0 6-4 9-9 9z" fill="#2E8B4E"/>
+        <path d="M11 31h18" stroke="#15251B" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <div><h1 data-t="appName">Rythu Mitra</h1><p data-t="tagline"></p></div>
+    </div>
+    <button class="lang" id="lang" type="button">తెలుగు</button>
+  </div>
+</header>
+
+<section class="field" aria-label="My field">
+  <div class="wrap">
+    <label class="f"><span data-t="crop"></span><select id="crop"></select></label>
+    <label class="f"><span data-t="district"></span><select id="district"></select></label>
+    <label class="f"><span data-t="acres"></span><input id="acres" type="number" min="0.25" max="100" step="0.25" value="2"></label>
+    <span class="season" data-t="season"></span>
+  </div>
+</section>
+
+<div class="tabline"><nav class="wrap tabs" role="tablist" id="tabs"></nav></div>
+
+<main class="wrap">
+  <section class="panel" id="p-doctor" role="tabpanel"></section>
+  <section class="panel" id="p-weather" role="tabpanel" hidden></section>
+  <section class="panel" id="p-fert" role="tabpanel" hidden></section>
+  <section class="panel" id="p-mandi" role="tabpanel" hidden></section>
+</main>
+
+<footer><div class="wrap" data-t="footer"></div></footer>
+
+<script>
+/* Rythu Mitra — knowledge base
+ * All agronomy content is a general advisory compiled for demonstration.
+ * Doses are per litre of water unless stated; ~200 L spray volume per acre.
+ * Farmers must read the product label and confirm with the local AEO / Rythu Vedika.
+ */
+(function (root) {
+  const CROPS = {
+    paddy:   { en: "Paddy",     te: "వరి" },
+    cotton:  { en: "Cotton",    te: "పత్తి" },
+    maize:   { en: "Maize",     te: "మొక్కజొన్న" },
+    chilli:  { en: "Chilli",    te: "మిరప" },
+    redgram: { en: "Red gram",  te: "కంది" }
+  };
+
+  const DISTRICTS = {
+    warangal:    { en: "Warangal",    te: "వరంగల్",    market: "Warangal (Enumamula)" },
+    khammam:     { en: "Khammam",     te: "ఖమ్మం",      market: "Khammam" },
+    nizamabad:   { en: "Nizamabad",   te: "నిజామాబాద్", market: "Nizamabad" },
+    suryapet:    { en: "Suryapet",    te: "సూర్యాపేట",  market: "Suryapet" },
+    mahabubnagar:{ en: "Mahabubnagar",te: "మహబూబ్‌నగర్", market: "Jadcherla" },
+    karimnagar:  { en: "Karimnagar",  te: "కరీంనగర్",   market: "Karimnagar" }
+  };
+
+  /* Approximate road distance in km between district market towns */
+  const DIST_KM = {
+    warangal:    { warangal: 5,   khammam: 120, nizamabad: 230, suryapet: 110, mahabubnagar: 230, karimnagar: 70 },
+    khammam:     { warangal: 120, khammam: 5,   nizamabad: 330, suryapet: 60,  mahabubnagar: 260, karimnagar: 190 },
+    nizamabad:   { warangal: 230, khammam: 330, nizamabad: 5,   suryapet: 280, mahabubnagar: 250, karimnagar: 120 },
+    suryapet:    { warangal: 110, khammam: 60,  nizamabad: 280, suryapet: 5,   mahabubnagar: 210, karimnagar: 180 },
+    mahabubnagar:{ warangal: 230, khammam: 260, nizamabad: 250, suryapet: 210, mahabubnagar: 5,   karimnagar: 240 },
+    karimnagar:  { warangal: 70,  khammam: 190, nizamabad: 120, suryapet: 180, mahabubnagar: 240, karimnagar: 5 }
+  };
+
+  /* ---------- Crop Doctor: symptoms ---------- */
+  const SYMPTOMS = {
+    paddy: [
+      { id: "p_spindle",    en: "Eye-shaped spots on leaves with grey centre and brown border", te: "ఆకులపై కంటి ఆకారపు మచ్చలు, మధ్యలో బూడిద రంగు" },
+      { id: "p_neck",       en: "Neck of the panicle turns black and breaks",                   te: "కంకి మెడ నల్లబడి విరిగిపోవడం" },
+      { id: "p_tipyellow",  en: "Leaves dry yellow from the tip down, with wavy edges",         te: "ఆకు కొన నుండి పసుపుగా ఎండిపోవడం" },
+      { id: "p_ooze",       en: "Yellowish droplets on leaves in the early morning",            te: "ఉదయం ఆకులపై పసుపు బిందువులు" },
+      { id: "p_hopperburn", en: "Round patches of crop drying and falling in the field",        te: "పొలంలో గుండ్రంగా పంట ఎండి పడిపోవడం" },
+      { id: "p_basebugs",   en: "Brown insects crowded at the base of plants",                  te: "మొక్క అడుగున గోధుమ రంగు పురుగులు" },
+      { id: "p_deadheart",  en: "Central shoot dries and pulls out easily",                     te: "మొవ్వు ఎండిపోయి సులభంగా ఊడి రావడం" },
+      { id: "p_whiteear",   en: "White, empty panicles",                                        te: "తెల్లని తాలు కంకులు" },
+      { id: "p_sheathspot", en: "Grey-green oval patches on the stem sheath near water level",  te: "నీటి మట్టం దగ్గర కాండంపై బూడిద రంగు మచ్చలు" },
+      { id: "humid",        en: "Humid, cloudy weather for several days",                       te: "కొన్ని రోజులుగా తేమ, మబ్బు వాతావరణం" },
+      { id: "highN",        en: "Applied a lot of urea recently",                               te: "ఇటీవల ఎక్కువ యూరియా వేశారు" }
+    ],
+    cotton: [
+      { id: "c_rosette",    en: "Flowers stay twisted shut like a rosette",          te: "పూలు గులాబీ మొగ్గలా ముడుచుకుపోవడం" },
+      { id: "c_pinklarva",  en: "Pink caterpillars inside bolls, seeds eaten",       te: "కాయల లోపల గులాబీ రంగు పురుగు" },
+      { id: "c_bollrot",    en: "Bolls open badly, lint is stained",                 te: "కాయలు సరిగా పగలకపోవడం, దూదికి మరకలు" },
+      { id: "c_sticky",     en: "Leaves sticky with a black sooty coating",          te: "ఆకులు జిగటగా, నల్లని బూజు" },
+      { id: "c_whiteflies", en: "Tiny white flies rise when the plant is shaken",    te: "మొక్క కదిలిస్తే తెల్ల దోమలు ఎగరడం" },
+      { id: "c_edgecurl",   en: "Leaf edges turn yellow, then red, and curl down",   te: "ఆకు అంచులు పసుపు, ఎరుపుగా మారి కిందకు ముడుచుకోవడం" },
+      { id: "c_greenhopper",en: "Small green insects walk sideways under leaves",    te: "ఆకు అడుగున పక్కకు నడిచే పచ్చ పురుగులు" },
+      { id: "c_wilt",       en: "Whole plant wilts suddenly",                        te: "మొక్క మొత్తం ఒక్కసారిగా వడలిపోవడం" },
+      { id: "c_stemstreak", en: "Brown streaks inside the stem when cut",            te: "కాండం కోస్తే లోపల గోధుమ రంగు గీతలు" },
+      { id: "dryhot",       en: "Dry, hot spell",                                    te: "పొడి, వేడి వాతావరణం" }
+    ],
+    maize: [
+      { id: "m_whorlholes", en: "Ragged holes in the young leaves of the whorl",          te: "మొవ్వు ఆకుల్లో చిరిగిన రంధ్రాలు" },
+      { id: "m_frass",      en: "Sawdust-like waste inside the whorl",                    te: "మొవ్వులో రంపపు పొట్టు లాంటి విసర్జన" },
+      { id: "m_ylarva",     en: "Caterpillar with an upside-down Y mark on its head",     te: "తలపై తిరగబడిన Y గుర్తు ఉన్న గొంగళి పురుగు" },
+      { id: "m_cigar",      en: "Long, cigar-shaped grey-green spots on leaves",          te: "ఆకులపై పొడవైన సిగార్ ఆకారపు మచ్చలు" },
+      { id: "m_lowerfirst", en: "Spots start on lower leaves and move upward",            te: "మచ్చలు కింది ఆకుల నుండి పైకి పాకడం" },
+      { id: "m_stalkrot",   en: "Stem base soft and water-soaked, plant falls over",      te: "కాండం అడుగు మెత్తబడి మొక్క పడిపోవడం" },
+      { id: "m_smell",      en: "Rotten smell from the stem base",                        te: "కాండం అడుగు నుండి కుళ్ళిన వాసన" },
+      { id: "humid",        en: "Humid, cloudy weather for several days",                 te: "కొన్ని రోజులుగా తేమ, మబ్బు వాతావరణం" }
+    ],
+    chilli: [
+      { id: "ch_upcurl",    en: "Leaves curl upward like a boat",                         te: "ఆకులు పైకి పడవలా ముడుచుకోవడం" },
+      { id: "ch_downcurl",  en: "Leaves curl downward, narrow and leathery",              te: "ఆకులు కిందకు ముడుచుకుని సన్నగా, గట్టిగా మారడం" },
+      { id: "ch_flower",    en: "Flowers turn brown and drop; tiny dark insects inside",  te: "పూలు గోధుమ రంగుకు మారి రాలడం, లోపల నల్ల పురుగులు" },
+      { id: "ch_whitefly",  en: "Tiny white flies under the leaves",                      te: "ఆకుల అడుగున తెల్ల దోమలు" },
+      { id: "ch_stunt",     en: "Plant stunted, leaves small and crinkled",               te: "మొక్క గిడసబారి, ఆకులు చిన్నగా ముడతలు" },
+      { id: "ch_fruitspot", en: "Sunken dark spots with rings on ripe fruits",            te: "పండు కాయలపై గుంట పడిన నల్ల మచ్చలు" },
+      { id: "ch_dieback",   en: "Twigs dry from the tip backward",                        te: "కొమ్మలు కొన నుండి ఎండిపోవడం" },
+      { id: "humid",        en: "Humid, cloudy weather for several days",                 te: "కొన్ని రోజులుగా తేమ, మబ్బు వాతావరణం" }
+    ],
+    redgram: [
+      { id: "r_podholes",   en: "Round holes in pods, caterpillar half outside",          te: "కాయలకు గుండ్రని రంధ్రాలు, పురుగు సగం బయట" },
+      { id: "r_webbing",    en: "Flowers and pods webbed together",                       te: "పూత, కాయలు గూడులా అల్లుకుపోవడం" },
+      { id: "r_wiltpatch",  en: "Plants wilt in patches, dry leaves stay attached",       te: "మొక్కలు గుంపులుగా వడలిపోవడం" },
+      { id: "r_blackstem",  en: "Dark band inside the stem near the ground",              te: "నేల దగ్గర కాండం లోపల నల్లని గీత" }
+    ]
+  };
+
+  /* ---------- Crop Doctor: diseases & pests ---------- */
+  const DISEASES = {
+    paddy: [
+      { id: "blast", type: "fungus", en: "Blast", te: "అగ్గి తెగులు",
+        w: { p_spindle: 3, p_neck: 3, humid: 1, highN: 1 },
+        act: ["Spray Tricyclazole 75 WP at 0.6 g per litre (about 120 g per acre).",
+              "Or Isoprothiolane 40 EC at 1.5 ml per litre.",
+              "Stop urea for now; apply the rest in smaller splits later."],
+        organic: "Pseudomonas fluorescens 10 g per litre as a spray.",
+        prevent: "Treat seed with Tricyclazole 2 g per kg. Avoid excess nitrogen." },
+      { id: "blb", type: "bacteria", en: "Bacterial leaf blight", te: "ఎండాకు తెగులు",
+        w: { p_tipyellow: 3, p_ooze: 3, highN: 1, humid: 1 },
+        act: ["Drain the field for 3–4 days and stop urea.",
+              "Spray Copper hydroxide 77 WP at 2 g per litre.",
+              "Top-dress potash (MOP 15 kg per acre) to harden the crop."],
+        organic: "Spray 20% fresh cow-dung extract (filtered).",
+        prevent: "Do not move water from infected to healthy fields. Use balanced fertilizer." },
+      { id: "bph", type: "insect", en: "Brown planthopper", te: "సుడిదోమ",
+        w: { p_hopperburn: 3, p_basebugs: 3, highN: 1 },
+        act: ["Drain the field and leave 20 cm walking alleys every 2 m.",
+              "Spray Pymetrozine 50 WG at 0.6 g per litre, aimed at the plant base.",
+              "Or Dinotefuran 20 SG at 0.4 g per litre."],
+        organic: "Avoid synthetic pyrethroids; they cause hopper resurgence.",
+        prevent: "Check plant bases weekly from 40 days. Limit nitrogen." },
+      { id: "stemborer", type: "insect", en: "Yellow stem borer", te: "కాండం తొలుచు పురుగు",
+        w: { p_deadheart: 3, p_whiteear: 3 },
+        act: ["Apply Chlorantraniliprole 0.4 G at 4 kg per acre in standing water.",
+              "Or Cartap hydrochloride 4 G at 8 kg per acre.",
+              "Pull out and destroy dead hearts."],
+        organic: "Set 3 pheromone traps per acre; release Trichogramma egg cards.",
+        prevent: "Clip seedling tips before transplanting to remove egg masses." },
+      { id: "sheath", type: "fungus", en: "Sheath blight", te: "పాముపొడ తెగులు",
+        w: { p_sheathspot: 3, humid: 1, highN: 1 },
+        act: ["Spray Hexaconazole 5 EC at 2 ml per litre, aimed at the stem base.",
+              "Or Validamycin 3 L at 2 ml per litre."],
+        organic: "Trichoderma viride with farmyard manure before transplanting.",
+        prevent: "Do not plant too densely. Avoid excess nitrogen." }
+    ],
+    cotton: [
+      { id: "pbw", type: "insect", en: "Pink bollworm", te: "గులాబీ రంగు పురుగు",
+        w: { c_rosette: 3, c_pinklarva: 3, c_bollrot: 2 },
+        act: ["Pick and destroy rosette flowers.",
+              "When traps catch 8 moths a night for 3 nights, spray Emamectin benzoate 5 SG at 0.4 g per litre or Profenofos 50 EC at 2 ml per litre.",
+              "Do not keep the crop beyond January."],
+        organic: "8 pheromone traps per acre for mass trapping.",
+        prevent: "Destroy stalks after harvest; do not store seed cotton at home." },
+      { id: "whitefly", type: "insect", en: "Whitefly", te: "తెల్లదోమ",
+        w: { c_sticky: 3, c_whiteflies: 3, dryhot: 1 },
+        act: ["Put up 10 yellow sticky traps per acre.",
+              "Spray Diafenthiuron 50 WP at 1.2 g per litre.",
+              "Rotate chemicals; never spray the same one twice in a row."],
+        organic: "Neem oil 1500 ppm at 5 ml per litre.",
+        prevent: "Avoid synthetic pyrethroids early in the season." },
+      { id: "jassid", type: "insect", en: "Jassid (leafhopper)", te: "పచ్చదోమ",
+        w: { c_edgecurl: 3, c_greenhopper: 3, dryhot: 1 },
+        act: ["Spray Flonicamid 50 WG at 0.3 g per litre.",
+              "Or Acetamiprid 20 SP at 0.2 g per litre."],
+        organic: "Neem oil 1500 ppm at 5 ml per litre at early stage.",
+        prevent: "Prefer hairy-leaf varieties; scout twice a week." },
+      { id: "wilt", type: "fungus", en: "Wilt / root rot", te: "వేరుకుళ్ళు / ఎండు తెగులు",
+        w: { c_wilt: 3, c_stemstreak: 3 },
+        act: ["Drench the root zone with Carbendazim 50 WP at 1 g per litre.",
+              "Or Copper oxychloride 50 WP at 3 g per litre.",
+              "Improve drainage; remove dead plants."],
+        organic: "Trichoderma viride 2 kg per acre mixed in 100 kg farmyard manure.",
+        prevent: "Rotate with jowar or maize; avoid waterlogging." }
+    ],
+    maize: [
+      { id: "faw", type: "insect", en: "Fall armyworm", te: "కత్తెర పురుగు",
+        w: { m_whorlholes: 3, m_frass: 3, m_ylarva: 3 },
+        act: ["Spray Emamectin benzoate 5 SG at 0.4 g per litre into the whorl.",
+              "Or Spinetoram 11.7 SC at 0.5 ml per litre.",
+              "Spray early morning or evening when larvae feed."],
+        organic: "Put sand mixed with lime (9:1) into the whorl; 5 pheromone traps per acre.",
+        prevent: "Sow at the same time as neighbours; check whorls from day 10." },
+      { id: "tlb", type: "fungus", en: "Turcicum leaf blight", te: "ఆకు ఎండు తెగులు",
+        w: { m_cigar: 3, m_lowerfirst: 2, humid: 1 },
+        act: ["Spray Mancozeb 75 WP at 2.5 g per litre.",
+              "Or Propiconazole 25 EC at 1 ml per litre."],
+        organic: "Remove and burn badly infected lower leaves.",
+        prevent: "Use resistant hybrids; rotate crops." },
+      { id: "stalkrot", type: "bacteria", en: "Bacterial stalk rot", te: "కాండం కుళ్ళు తెగులు",
+        w: { m_stalkrot: 3, m_smell: 3, humid: 1 },
+        act: ["Apply bleaching powder (33% chlorine) 4 kg per acre near the plant base.",
+              "Drain standing water immediately."],
+        organic: "Remove and destroy rotten plants.",
+        prevent: "Avoid waterlogging; ensure good field drainage." }
+    ],
+    chilli: [
+      { id: "thrips", type: "insect", en: "Thrips (leaf curl)", te: "తామర పురుగు",
+        w: { ch_upcurl: 3, ch_flower: 1 },
+        act: ["Spray Fipronil 5 SC at 2 ml per litre.",
+              "Or Spinetoram 11.7 SC at 0.9 ml per litre."],
+        organic: "25 blue sticky traps per acre; neem oil 5 ml per litre.",
+        prevent: "Grow 2 rows of maize or jowar as a border crop." },
+      { id: "blackthrips", type: "insect", en: "Black thrips (flower thrips)", te: "నల్ల తామర పురుగు",
+        w: { ch_flower: 3, ch_upcurl: 1 },
+        act: ["Spray Cyantraniliprole 10.26 OD at 1.2 ml per litre.",
+              "Rotate with Spinetoram 11.7 SC at 0.9 ml per litre after 7 days.",
+              "Report the outbreak to your AEO."],
+        organic: "Blue sticky traps; spray neem oil at flowering.",
+        prevent: "Scout flowers twice a week from 45 days." },
+      { id: "mites", type: "insect", en: "Yellow mite", te: "నల్లి",
+        w: { ch_downcurl: 3 },
+        act: ["Spray Spiromesifen 22.9 SC at 0.8 ml per litre.",
+              "Or wettable sulphur 80 WP at 3 g per litre."],
+        organic: "Spray the underside of leaves thoroughly.",
+        prevent: "Remove weeds that host mites." },
+      { id: "lcv", type: "virus", en: "Leaf curl virus", te: "ఆకు ముడత వైరస్",
+        w: { ch_whitefly: 3, ch_stunt: 3, ch_upcurl: 1 },
+        act: ["There is no cure. Uproot and bury infected plants.",
+              "Control whitefly with Diafenthiuron 50 WP at 1.2 g per litre.",
+              "Put up 10 yellow sticky traps per acre."],
+        organic: "Raise nursery under insect-proof net.",
+        prevent: "Use tolerant varieties; maize border crop." },
+      { id: "anthracnose", type: "fungus", en: "Fruit rot and dieback", te: "కాయకుళ్ళు, కొమ్మ ఎండు తెగులు",
+        w: { ch_fruitspot: 3, ch_dieback: 3, humid: 1 },
+        act: ["Spray Propiconazole 25 EC at 1 ml per litre.",
+              "Or Azoxystrobin 23 SC at 1 ml per litre.",
+              "Pick and destroy infected fruits."],
+        organic: "Seed treatment with Trichoderma 4 g per kg.",
+        prevent: "Harvest ripe fruits on time; dry on clean tarpaulins." }
+    ],
+    redgram: [
+      { id: "podborer", type: "insect", en: "Pod borer (Helicoverpa)", te: "శనగపచ్చ పురుగు",
+        w: { r_podholes: 3 },
+        act: ["Spray Chlorantraniliprole 18.5 SC at 0.3 ml per litre.",
+              "Or Emamectin benzoate 5 SG at 0.4 g per litre."],
+        organic: "20 bird perches per acre; HaNPV 200 LE per acre in the evening.",
+        prevent: "Spray at 50% flowering if larvae are seen." },
+      { id: "maruca", type: "insect", en: "Spotted pod borer (Maruca)", te: "మారుకా మచ్చల పురుగు",
+        w: { r_webbing: 3, r_podholes: 1 },
+        act: ["Spray Chlorantraniliprole 18.5 SC at 0.3 ml per litre.",
+              "Or Spinosad 45 SC at 0.3 ml per litre."],
+        organic: "Shake plants over a cloth to collect larvae.",
+        prevent: "Scout webbed flowers from bud stage." },
+      { id: "fwilt", type: "fungus", en: "Fusarium wilt", te: "ఎండు తెగులు",
+        w: { r_wiltpatch: 3, r_blackstem: 3 },
+        act: ["Remove and burn wilted plants.",
+              "Drench Carbendazim 50 WP at 1 g per litre around nearby plants."],
+        organic: "Seed treatment with Trichoderma viride 10 g per kg.",
+        prevent: "Grow wilt-resistant varieties; rotate with jowar for 2–3 years." }
+    ]
+  };
+
+  /* ---------- Fertilizer: general recommendation, kg per hectare ---------- */
+  const NPK_HA = {
+    paddy:   { n: 120, p: 60, k: 40, splits: "N: ⅓ at transplanting, ⅓ at tillering, ⅓ at panicle initiation. P full at transplanting. K: ½ basal, ½ at panicle initiation." },
+    cotton:  { n: 120, p: 60, k: 60, splits: "N: in 3 equal splits at 20, 40 and 60 days. P full at sowing. K: ½ at sowing, ½ at 60 days." },
+    maize:   { n: 180, p: 60, k: 50, splits: "N: ⅓ at sowing, ⅓ at knee-high stage, ⅓ at tasseling. P full at sowing. K: ½ basal, ½ at knee-high." },
+    chilli:  { n: 180, p: 60, k: 60, splits: "N: in 4 splits at transplanting, 30, 60 and 90 days. P full basal. K: ½ basal, ½ at 60 days." },
+    redgram: { n: 20,  p: 50, k: 0,  splits: "All N and P as basal at sowing. Seed treatment with Rhizobium culture." }
+  };
+
+  /* Fertilizer products: nutrient fractions, bag size kg, approx price per bag (₹) */
+  const PRODUCTS = {
+    urea: { n: 0.46, p: 0,    k: 0,    bag: 45, price: 266.5 },
+    dap:  { n: 0.18, p: 0.46, k: 0,    bag: 50, price: 1350 },
+    mop:  { n: 0,    p: 0,    k: 0.60, bag: 50, price: 1700 }
+  };
+
+  /* ---------- Mandi ---------- */
+  /* MSP for Kharif Marketing Season 2026-27 (₹ per quintal), Government of India, May 2026.
+     Cotton = medium staple. Chilli has no MSP. */
+  const MSP = { paddy: 2441, cotton: 8267, maize: 2410, redgram: 8450, chilli: null };
+  const PROCURER = {
+    paddy:   { en: "PACS / IKP paddy procurement centre", te: "PACS / IKP కొనుగోలు కేంద్రం" },
+    cotton:  { en: "CCI cotton purchase centre",          te: "CCI పత్తి కొనుగోలు కేంద్రం" },
+    maize:   { en: "Markfed procurement centre",          te: "మార్క్‌ఫెడ్ కొనుగోలు కేంద్రం" },
+    redgram: { en: "Markfed / NAFED procurement centre",  te: "మార్క్‌ఫెడ్ / నాఫెడ్ కేంద్రం" }
+  };
+  /* Sample base modal prices (₹/quintal) and which markets trade the crop */
+  const MANDI_BASE = {
+    paddy:   { base: 2290,  markets: ["warangal", "khammam", "nizamabad", "suryapet", "mahabubnagar", "karimnagar"] },
+    cotton:  { base: 7680,  markets: ["warangal", "khammam", "suryapet", "mahabubnagar", "karimnagar"] },
+    maize:   { base: 2240,  markets: ["warangal", "nizamabad", "mahabubnagar", "karimnagar"] },
+    redgram: { base: 7900,  markets: ["warangal", "khammam", "nizamabad", "mahabubnagar"] },
+    chilli:  { base: 14600, markets: ["warangal", "khammam"] }
+  };
+
+  /* Sample 7-day weather pattern for early Rabi (November) in Telangana */
+  const WEATHER_BASE = [
+    { tmax: 30, tmin: 19, rain: 0,  prob: 10, wind: 8,  rh: 62 },
+    { tmax: 29, tmin: 20, rain: 2,  prob: 35, wind: 10, rh: 74 },
+    { tmax: 27, tmin: 21, rain: 18, prob: 80, wind: 14, rh: 90 },
+    { tmax: 28, tmin: 20, rain: 4,  prob: 55, wind: 18, rh: 86 },
+    { tmax: 30, tmin: 18, rain: 0,  prob: 15, wind: 9,  rh: 66 },
+    { tmax: 31, tmin: 17, rain: 0,  prob: 5,  wind: 7,  rh: 58 },
+    { tmax: 31, tmin: 16, rain: 0,  prob: 5,  wind: 12, rh: 55 }
+  ];
+
+  const KB = { CROPS, DISTRICTS, DIST_KM, SYMPTOMS, DISEASES, NPK_HA, PRODUCTS, MSP, PROCURER, MANDI_BASE, WEATHER_BASE };
+  if (typeof module !== "undefined" && module.exports) module.exports = KB;
+  else root.KB = KB;
+})(this);
+</script>
+<script>
+/* Rythu Mitra — interface text in English and Telugu */
+(function (root) {
+  const I18N = {
+    en: {
+      appName: "Rythu Mitra", tagline: "Farm advice for Telangana, in your language",
+      crop: "Crop", district: "District", acres: "Land (acres)", season: "Rabi 2026–27",
+      tabDoctor: "Crop Doctor", tabWeather: "Weather & Spray", tabFert: "Fertilizer", tabMandi: "Mandi Prices",
+      docTitle: "What do you see in the field?", docHint: "Tap every sign you notice. Rythu Mitra matches them against common pests and diseases of",
+      docEmpty: "Pick at least one sign to see what it could be.", docNoMatch: "No clear match. Take a photo and show it to your AEO or call the Kisan Call Centre.",
+      clear: "Clear", match: "match", likely: "Most likely", alsoCheck: "Also check",
+      lvl_high: "Strong match", lvl_medium: "Possible", lvl_low: "Weak match",
+      whatToDo: "What to do now", organic: "Low-cost / organic option", prevent: "Next season",
+      signsMatched: "Signs that match", type_fungus: "Fungus", type_bacteria: "Bacteria", type_insect: "Insect pest", type_virus: "Virus",
+      safety: "Wear gloves and a mask. Read the label. Doses are per litre of water (about 200 litres per acre). Confirm with your Agriculture Extension Officer or Kisan Call Centre 1800-180-1551 before spraying.",
+      wxTitle: "7-day spray planner", wxHint: "Sample forecast. Change any number to see how the advice changes.",
+      wxEdit: "Forecast values", rain: "Rain mm", prob: "Rain %", wind: "Wind km/h", rh: "Humidity %", tmax: "Max °C",
+      v_ok: "Spray OK", v_caution: "Careful", v_no: "Don't spray",
+      r_good: "Best between 7–10 AM or after 4 PM", r_rain: "Rain will wash the spray off", r_wind: "Wind will drift the spray",
+      r_rainNext: "Heavy rain tomorrow — spray only if 6 hours dry", r_heat: "Too hot at noon — spray early or late",
+      tipsTitle: "This week on your farm",
+      t_holdUrea: "Heavy rain expected on {day}. Hold urea top-dressing until after the rain, or it will wash away.",
+      t_fungal_paddy: "Humid nights from {day} favour blast and sheath blight. Check leaves and stem bases every 2 days.",
+      t_fungal_cotton: "Humid spell from {day} can cause boll rot. Watch lower bolls.",
+      t_fungal_maize: "Humid spell from {day} favours leaf blight. Watch lower leaves.",
+      t_fungal_chilli: "Humid spell from {day} favours fruit rot. Pick infected fruits quickly.",
+      t_fungal_redgram: "Humid spell from {day} favours wilt and blight. Keep drains open.",
+      t_irrigate: "Dry and hot week. Plan irrigation; water early morning.",
+      t_drain: "Good rain this week. Skip irrigation and keep field drains open.",
+      t_coldNursery: "Cold nights below 15 °C. Cover paddy nursery with polythene sheet at night.",
+      t_bestSpray: "Best day to spray this week: {day}.",
+      fTitle: "How much fertilizer to buy", fHint: "General state recommendation. If you have a Soil Health Card, type its values here.",
+      perHa: "Nutrient need (kg per hectare)", n: "Nitrogen (N)", p: "Phosphorus (P₂O₅)", k: "Potash (K₂O)",
+      reset: "Reset to recommended", product: "Product", kg: "Kg needed", bags: "Bags to buy", cost: "Approx. cost",
+      urea: "Urea (46% N)", dap: "DAP (18-46-0)", mop: "MOP (60% K₂O)", total: "Total",
+      when: "When to apply", fNote: "Urea 45 kg bag at ₹266.50 (fixed MRP); DAP and MOP prices approximate.",
+      mTitle: "Where to sell for the best price", mHint: "Sample prices for demonstration. The live version reads Agmarknet data.",
+      qty: "Quantity (quintals)", rate: "Transport (₹ per quintal per km)",
+      market: "Market", modal: "Today", trend: "7 days", km: "Distance", net: "You get / qtl",
+      best: "Best market", msp: "MSP 2026–27", noMsp: "No MSP for this crop",
+      belowMsp: "Below MSP", aboveMsp: "Above MSP",
+      mspAlert: "Open market is ₹{gap} per quintal below MSP. Selling {qty} quintals at the {where} gets you about ₹{extra} more.",
+      bestLine: "Selling {qty} quintals at {market} gives about ₹{total} after transport.",
+      sample: "Sample data", footer: "Rythu Mitra · Rural software project · CBIT AI&DS · Advisory only; always confirm with your local AEO.",
+      langBtn: "తెలుగు"
+    },
+    te: {
+      appName: "రైతు మిత్ర", tagline: "తెలంగాణ రైతులకు మీ భాషలో వ్యవసాయ సలహా",
+      crop: "పంట", district: "జిల్లా", acres: "భూమి (ఎకరాలు)", season: "రబీ 2026–27",
+      tabDoctor: "పంట డాక్టర్", tabWeather: "వాతావరణం & పిచికారీ", tabFert: "ఎరువులు", tabMandi: "మార్కెట్ ధరలు",
+      docTitle: "పొలంలో మీకు ఏమి కనిపిస్తోంది?", docHint: "మీరు గమనించిన అన్ని లక్షణాలను ఎంచుకోండి. రైతు మిత్ర వాటిని ఈ పంట తెగుళ్లతో పోలుస్తుంది:",
+      docEmpty: "కనీసం ఒక లక్షణాన్ని ఎంచుకోండి.", docNoMatch: "స్పష్టమైన ఫలితం లేదు. ఫోటో తీసి మీ AEO కి చూపించండి లేదా కిసాన్ కాల్ సెంటర్‌కు ఫోన్ చేయండి.",
+      clear: "తొలగించు", match: "సరిపోలిక", likely: "ఎక్కువ అవకాశం", alsoCheck: "ఇది కూడా చూడండి",
+      lvl_high: "బలమైన సరిపోలిక", lvl_medium: "అవకాశం ఉంది", lvl_low: "తక్కువ సరిపోలిక",
+      whatToDo: "ఇప్పుడు ఏమి చేయాలి", organic: "తక్కువ ఖర్చు / సేంద్రియ పద్ధతి", prevent: "వచ్చే సీజన్‌లో",
+      signsMatched: "సరిపోయిన లక్షణాలు", type_fungus: "శిలీంధ్రం", type_bacteria: "బాక్టీరియా", type_insect: "పురుగు", type_virus: "వైరస్",
+      safety: "చేతి తొడుగులు, మాస్క్ వాడండి. లేబుల్ చదవండి. మోతాదు లీటరు నీటికి (ఎకరాకు సుమారు 200 లీటర్లు). పిచికారీకి ముందు మీ వ్యవసాయ విస్తరణ అధికారి లేదా కిసాన్ కాల్ సెంటర్ 1800-180-1551 ను సంప్రదించండి.",
+      wxTitle: "7 రోజుల పిచికారీ ప్రణాళిక", wxHint: "నమూనా వాతావరణ సూచన. ఏ సంఖ్యనైనా మార్చి సలహా ఎలా మారుతుందో చూడండి.",
+      wxEdit: "వాతావరణ విలువలు", rain: "వర్షం mm", prob: "వర్షం %", wind: "గాలి km/h", rh: "తేమ %", tmax: "గరిష్ఠ °C",
+      v_ok: "పిచికారీ చేయవచ్చు", v_caution: "జాగ్రత్త", v_no: "పిచికారీ వద్దు",
+      r_good: "ఉదయం 7–10 లేదా సాయంత్రం 4 తర్వాత", r_rain: "వర్షానికి మందు కొట్టుకుపోతుంది", r_wind: "గాలికి మందు చెదిరిపోతుంది",
+      r_rainNext: "రేపు భారీ వర్షం — 6 గంటలు పొడిగా ఉంటేనే", r_heat: "మధ్యాహ్నం ఎండ ఎక్కువ — ఉదయం లేదా సాయంత్రం",
+      tipsTitle: "ఈ వారం మీ పొలంలో",
+      t_holdUrea: "{day} న భారీ వర్షం. వర్షం తర్వాతే యూరియా వేయండి, లేకపోతే కొట్టుకుపోతుంది.",
+      t_fungal_paddy: "{day} నుండి తేమ రాత్రులు — అగ్గి తెగులు, పాముపొడ తెగులు ప్రమాదం. ప్రతి 2 రోజులకు ఆకులు, కాండం చూడండి.",
+      t_fungal_cotton: "{day} నుండి తేమ వాతావరణం — కాయకుళ్ళు ప్రమాదం. కింది కాయలను గమనించండి.",
+      t_fungal_maize: "{day} నుండి తేమ వాతావరణం — ఆకు ఎండు తెగులు ప్రమాదం.",
+      t_fungal_chilli: "{day} నుండి తేమ వాతావరణం — కాయకుళ్ళు ప్రమాదం. తెగులు సోకిన కాయలు తొలగించండి.",
+      t_fungal_redgram: "{day} నుండి తేమ వాతావరణం — ఎండు తెగులు ప్రమాదం. కాలువలు తెరిచి ఉంచండి.",
+      t_irrigate: "పొడి, వేడి వారం. ఉదయాన్నే నీరు పెట్టండి.",
+      t_drain: "ఈ వారం మంచి వర్షం. నీరు పెట్టవద్దు, కాలువలు తెరిచి ఉంచండి.",
+      t_coldNursery: "రాత్రి 15 °C కంటే తక్కువ చలి. వరి నారుమడిని రాత్రి పాలిథీన్ షీట్‌తో కప్పండి.",
+      t_bestSpray: "ఈ వారం పిచికారీకి మంచి రోజు: {day}.",
+      fTitle: "ఎంత ఎరువు కొనాలి", fHint: "రాష్ట్ర సాధారణ సిఫార్సు. మీ దగ్గర భూసార పరీక్ష కార్డు ఉంటే, ఆ విలువలు ఇక్కడ ఇవ్వండి.",
+      perHa: "పోషక అవసరం (హెక్టారుకు కిలోలు)", n: "నత్రజని (N)", p: "భాస్వరం (P₂O₅)", k: "పొటాష్ (K₂O)",
+      reset: "సిఫార్సు విలువలు", product: "ఎరువు", kg: "కావలసిన కిలోలు", bags: "కొనాల్సిన బస్తాలు", cost: "సుమారు ఖర్చు",
+      urea: "యూరియా (46% N)", dap: "డీఏపీ (18-46-0)", mop: "ఎంఓపీ (60% K₂O)", total: "మొత్తం",
+      when: "ఎప్పుడు వేయాలి", fNote: "యూరియా 45 కిలోల బస్తా ₹266.50 (నిర్ణీత ధర); డీఏపీ, ఎంఓపీ ధరలు సుమారుగా.",
+      mTitle: "ఎక్కడ అమ్మితే ఎక్కువ ధర", mHint: "ప్రదర్శన కోసం నమూనా ధరలు. పూర్తి వెర్షన్ అగ్‌మార్క్‌నెట్ డేటా వాడుతుంది.",
+      qty: "పరిమాణం (క్వింటాళ్లు)", rate: "రవాణా (క్వింటాల్‌కు కి.మీ.కు ₹)",
+      market: "మార్కెట్", modal: "నేటి ధర", trend: "7 రోజులు", km: "దూరం", net: "మీకు వచ్చేది / క్వి.",
+      best: "ఉత్తమ మార్కెట్", msp: "MSP 2026–27", noMsp: "ఈ పంటకు MSP లేదు",
+      belowMsp: "MSP కంటే తక్కువ", aboveMsp: "MSP కంటే ఎక్కువ",
+      mspAlert: "బహిరంగ మార్కెట్ ధర MSP కంటే క్వింటాల్‌కు ₹{gap} తక్కువ. {qty} క్వింటాళ్లు {where} లో అమ్మితే సుమారు ₹{extra} ఎక్కువ వస్తుంది.",
+      bestLine: "{qty} క్వింటాళ్లు {market} లో అమ్మితే రవాణా తర్వాత సుమారు ₹{total} వస్తుంది.",
+      sample: "నమూనా డేటా", footer: "రైతు మిత్ర · గ్రామీణ సాఫ్ట్‌వేర్ ప్రాజెక్ట్ · CBIT AI&DS · ఇది సలహా మాత్రమే; మీ AEO తో నిర్ధారించుకోండి.",
+      langBtn: "English"
+    }
+  };
+  if (typeof module !== "undefined" && module.exports) module.exports = I18N;
+  else root.I18N = I18N;
+})(this);
+</script>
+<script>
+/* Rythu Mitra — decision engines (pure functions, no DOM).
+ * Works in the browser (window.Engine) and in Node (require) for testing.
+ */
+(function (root) {
+  const KB = (typeof module !== "undefined" && module.exports) ? require("./data.js") : root.KB;
+  const HA_PER_ACRE = 2.471;
+
+  /* ---------- 1. Crop Doctor: weighted symptom matching ---------- */
+  function diagnose(crop, selected) {
+    const picked = new Set(selected);
+    if (!picked.size) return [];
+    const list = KB.DISEASES[crop] || [];
+    return list.map(d => {
+      const ids = Object.keys(d.w);
+      const total = ids.reduce((s, id) => s + d.w[id], 0);
+      const matched = ids.filter(id => picked.has(id));
+      const matchedW = matched.reduce((s, id) => s + d.w[id], 0);
+      // coverage: how much of this disease's pattern is present
+      // focus: how many of the farmer's symptoms this disease explains
+      const coverage = matchedW / total;
+      const focus = matched.length / picked.size;
+      const score = Math.round(100 * coverage * (0.75 + 0.25 * focus));
+      return { disease: d, score, matched, level: score >= 70 ? "high" : score >= 40 ? "medium" : "low" };
+    })
+    .filter(r => r.matched.length && r.score >= 15)
+    .sort((a, b) => b.score - a.score);
+  }
+
+  /* ---------- 2. Fertilizer calculator ---------- */
+  function fertilizer(npkHa, acres) {
+    const P = KB.PRODUCTS;
+    const perAcre = { n: npkHa.n / HA_PER_ACRE, p: npkHa.p / HA_PER_ACRE, k: npkHa.k / HA_PER_ACRE };
+    const need = { n: perAcre.n * acres, p: perAcre.p * acres, k: perAcre.k * acres };
+    // DAP supplies all phosphorus and part of the nitrogen; urea makes up the rest of N; MOP supplies K.
+    const dapKg = need.p / P.dap.p;
+    const nFromDap = dapKg * P.dap.n;
+    const ureaKg = Math.max(0, need.n - nFromDap) / P.urea.n;
+    const mopKg = need.k / P.mop.k;
+    const item = (key, kg) => {
+      const bags = kg / P[key].bag;
+      const buyBags = Math.ceil(bags - 1e-9);
+      return { key, kg, bags, buyBags, cost: buyBags * P[key].price };
+    };
+    const items = [item("urea", ureaKg), item("dap", dapKg), item("mop", mopKg)].filter(i => i.kg > 0.05);
+    return { perAcre, need, items, total: items.reduce((s, i) => s + i.cost, 0) };
+  }
+
+  /* ---------- 3. Weather & spray advisory ---------- */
+  function hash(s) { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
+
+  function sampleForecast(district, start) {
+    const shift = hash(district) % 3;
+    const dt = (hash(district + "t") % 3) - 1;
+    return KB.WEATHER_BASE.map((_, i) => {
+      const b = KB.WEATHER_BASE[(i + shift) % KB.WEATHER_BASE.length];
+      const d = new Date(start); d.setDate(d.getDate() + i);
+      return { date: d, tmax: b.tmax + dt, tmin: b.tmin + dt, rain: b.rain, prob: b.prob, wind: b.wind, rh: b.rh };
+    });
+  }
+
+  /* Rules from standard plant-protection practice:
+     - no spraying when rain is likely (it washes the chemical off)
+     - no spraying above 15 km/h wind (drift)
+     - in heat (>= 35 °C) spray only early morning or evening */
+  function sprayVerdict(day, next) {
+    if (day.rain >= 5 || day.prob >= 60) return { level: "no", reason: "rain" };
+    if (day.wind > 15) return { level: "no", reason: "wind" };
+    if (next && (next.rain >= 10 || next.prob >= 70)) return { level: "caution", reason: "rainNext" };
+    if (day.tmax >= 35) return { level: "caution", reason: "heat" };
+    return { level: "ok", reason: "good" };
+  }
+
+  function fieldTips(days, crop) {
+    const tips = [];
+    const heavy = days.slice(0, 3).find(d => d.rain >= 15);
+    if (heavy) tips.push({ key: "holdUrea", sev: "warn", day: heavy.date });
+    const humidDays = days.filter(d => d.rh >= 85 && d.tmin >= 18);
+    if (humidDays.length) tips.push({ key: "fungal_" + crop, sev: "warn", day: humidDays[0].date });
+    const totalRain = days.reduce((s, d) => s + d.rain, 0);
+    const hot = days.filter(d => d.tmax >= 33).length;
+    if (totalRain < 5 && hot >= 3) tips.push({ key: "irrigate", sev: "info" });
+    else if (totalRain >= 20) tips.push({ key: "drain", sev: "info" });
+    if (crop === "paddy" && days.some(d => d.tmin <= 15)) tips.push({ key: "coldNursery", sev: "warn" });
+    const best = days.find(d => sprayVerdict(d, days[days.indexOf(d) + 1]).level === "ok");
+    if (best) tips.push({ key: "bestSpray", sev: "ok", day: best.date });
+    return tips;
+  }
+
+  /* ---------- 4. Mandi: best market after transport ---------- */
+  function priceSeries(crop, market) {
+    const base = KB.MANDI_BASE[crop].base;
+    const h = hash(market + crop);
+    const factor = 1 + ((h % 7) - 3) / 100;                       // ±3% market premium/discount
+    const drift = ((hash(crop) % 5) - 2) / 1000;                  // small weekly trend
+    return Array.from({ length: 7 }, (_, i) =>
+      Math.round(base * factor * (1 + Math.sin(i * 0.9 + (h % 10)) * 0.012 + drift * i) / 5) * 5);
+  }
+
+  function bestMarket(crop, home, qty, ratePerKm) {
+    const msp = KB.MSP[crop];
+    const rows = KB.MANDI_BASE[crop].markets.map(m => {
+      const series = priceSeries(crop, m);
+      const modal = series[series.length - 1];
+      const km = KB.DIST_KM[home][m];
+      const transport = km * ratePerKm;                            // ₹ per quintal
+      const net = modal - transport;
+      return { market: m, series, modal, km, transport, net, gross: modal * qty, netTotal: net * qty,
+               belowMsp: msp ? modal < msp : false, change: modal - series[series.length - 2] };
+    }).sort((a, b) => b.net - a.net);
+    const best = rows[0];
+    const mspAdvice = msp && best.net < msp
+      ? { msp, gapPerQtl: msp - best.net, extra: (msp - best.net) * qty } : null;
+    return { rows, best, msp, mspAdvice };
+  }
+
+  const Engine = { diagnose, fertilizer, sampleForecast, sprayVerdict, fieldTips, priceSeries, bestMarket, HA_PER_ACRE };
+  if (typeof module !== "undefined" && module.exports) module.exports = Engine;
+  else root.Engine = Engine;
+})(this);
+</script>
+<script>
+/* Rythu Mitra — user interface */
+(function () {
+  const { CROPS, DISTRICTS, SYMPTOMS, DISEASES, NPK_HA, PRODUCTS, MSP, PROCURER, MANDI_BASE } = KB;
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const inr = n => Math.round(n).toLocaleString("en-IN");
+
+  /* ---------- state (remembered on this phone) ---------- */
+  const saved = (() => { try { return JSON.parse(localStorage.getItem("rythu-mitra") || "{}"); } catch (e) { return {}; } })();
+  const S = {
+    lang: saved.lang || "en", crop: saved.crop || "paddy", district: saved.district || "warangal",
+    acres: saved.acres || 2, tab: "doctor", picked: {}, npk: {}, qty: 20, rate: 0.8, forecast: null
+  };
+  function save() { try { localStorage.setItem("rythu-mitra", JSON.stringify({ lang: S.lang, crop: S.crop, district: S.district, acres: S.acres })); } catch (e) {} }
+
+  const t = (k, vars) => { let s = (I18N[S.lang][k] ?? I18N.en[k] ?? k); if (vars) for (const v in vars) s = s.replaceAll("{" + v + "}", vars[v]); return s; };
+  const nm = o => o[S.lang] || o.en;
+  const fmtDay = d => d.toLocaleDateString(S.lang === "te" ? "te-IN" : "en-IN", { weekday: "short", day: "numeric", month: "short" });
+
+  /* ---------- tabs ---------- */
+  const ICON = {
+    doctor: '<path d="M12 21c-4-3-7-6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4-3 7-7 10z"/><path d="M9 12h6M12 9v6"/>',
+    weather: '<path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.6 1.5A3.3 3.3 0 0 0 7 18z"/><path d="M9 21l1-2M14 21l1-2"/>',
+    fert: '<path d="M6 8h12l-1 13H7z"/><path d="M9 8V5h6v3"/><path d="M10 13h4"/>',
+    mandi: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'
+  };
+  const TABS = [["doctor", "tabDoctor"], ["weather", "tabWeather"], ["fert", "tabFert"], ["mandi", "tabMandi"]];
+  function renderTabs() {
+    $("#tabs").innerHTML = TABS.map(([id, k]) =>
+      `<button class="tab" role="tab" type="button" data-tab="${id}" aria-selected="${S.tab === id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[id]}</svg>
+        <span>${t(k)}</span></button>`).join("");
+    TABS.forEach(([id]) => { $("#p-" + id).hidden = S.tab !== id; });
+  }
+
+  function renderStatic() {
+    document.documentElement.lang = S.lang === "te" ? "te" : "en";
+    document.querySelectorAll("[data-t]").forEach(el => { el.textContent = t(el.dataset.t); });
+    $("#lang").textContent = t("langBtn");
+    $("#crop").innerHTML = Object.keys(CROPS).map(c => `<option value="${c}" ${c === S.crop ? "selected" : ""}>${esc(nm(CROPS[c]))}</option>`).join("");
+    $("#district").innerHTML = Object.keys(DISTRICTS).map(d => `<option value="${d}" ${d === S.district ? "selected" : ""}>${esc(nm(DISTRICTS[d]))}</option>`).join("");
+    $("#acres").value = S.acres;
+  }
+
+  /* ---------- 1. Crop Doctor ---------- */
+  function picked() { return S.picked[S.crop] || (S.picked[S.crop] = new Set()); }
+
+  function renderDoctor() {
+    const syms = SYMPTOMS[S.crop];
+    const p = picked();
+    $("#p-doctor").innerHTML = `
+      <h2>${t("docTitle")}</h2>
+      <p class="hint">${t("docHint")} <b>${esc(nm(CROPS[S.crop]))}</b>.</p>
+      <div class="cols">
+        <div>
+          <div class="symhead"><span class="muted num">${p.size} / ${syms.length}</span><button class="link" id="clearSym" type="button">${t("clear")}</button></div>
+          <div class="sym" id="symList">${syms.map(s =>
+            `<button type="button" data-sym="${s.id}" aria-pressed="${p.has(s.id)}"><span class="box"></span><span>${esc(nm(s))}</span></button>`).join("")}</div>
+        </div>
+        <div id="dxOut"></div>
+      </div>`;
+    renderDiagnosis();
+  }
+
+  function renderDiagnosis() {
+    const p = picked();
+    const out = $("#dxOut");
+    if (!p.size) { out.innerHTML = `<div class="empty">${t("docEmpty")}</div>`; return; }
+    const res = Engine.diagnose(S.crop, [...p]);
+    if (!res.length) { out.innerHTML = `<div class="empty">${t("docNoMatch")}</div>`; return; }
+    const symName = id => nm(SYMPTOMS[S.crop].find(s => s.id === id));
+    const [top, ...rest] = res;
+    const d = top.disease;
+    out.innerHTML = `<div class="dx">
+      <div class="card dx-main">
+        <div class="dx-top">
+          <div><div class="dx-sub">${t("likely")} · ${t("type_" + d.type)}</div>
+            <div class="dx-name">${esc(nm(d))}</div>
+            <div class="dx-sub">${S.lang === "te" ? esc(d.en) : esc(d.te)}</div></div>
+          <div class="meter"><b class="lvl-${top.level}">${top.score}%</b><span class="dx-sub">${t("lvl_" + top.level)}</span></div>
+        </div>
+        <div class="bar"><i style="width:${top.score}%"></i></div>
+        <h4>${t("signsMatched")}</h4><p>${top.matched.map(id => esc(symName(id))).join(" · ")}</p>
+        <h4>${t("whatToDo")}</h4><ol>${d.act.map(a => `<li>${esc(a)}</li>`).join("")}</ol>
+        <h4>${t("organic")}</h4><p>${esc(d.organic)}</p>
+        <h4>${t("prevent")}</h4><p>${esc(d.prevent)}</p>
+      </div>
+      ${rest.length ? `<div class="card"><h4 style="margin-top:0">${t("alsoCheck")}</h4>${rest.map(r =>
+        `<div class="alt"><div><div class="dx-name">${esc(nm(r.disease))}</div><div class="dx-sub">${t("type_" + r.disease.type)}</div></div>
+         <div class="num lvl-${r.level}">${r.score}%</div></div>`).join('<hr style="border:0;border-top:1px solid var(--line);margin:10px 0">')}</div>` : ""}
+      <div class="safety">${t("safety")}</div>
+    </div>`;
+  }
+
+  /* ---------- 2. Weather & spray ---------- */
+  function ensureForecast() {
+    if (!S.forecast || S.forecast.district !== S.district) {
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      S.forecast = { district: S.district, days: Engine.sampleForecast(S.district, today) };
+    }
+    return S.forecast.days;
+  }
+
+  function renderWeather() {
+    const days = ensureForecast();
+    const fields = ["rain", "prob", "wind", "rh", "tmax"];
+    $("#p-weather").innerHTML = `
+      <h2>${t("wxTitle")} · ${esc(nm(DISTRICTS[S.district]))}</h2>
+      <p class="hint"><span class="chip sample">${t("sample")}</span> ${t("wxHint")}</p>
+      <div class="days" id="dayCards"></div>
+      <div class="wxgrid">
+        <div><h3>${t("tipsTitle")}</h3><ul class="tips" id="tips"></ul></div>
+        <div><h3>${t("wxEdit")}</h3>
+          <div class="card scroll" style="padding:6px 10px"><table>
+            <thead><tr><th></th>${fields.map(f => `<th>${t(f)}</th>`).join("")}</tr></thead>
+            <tbody>${days.map((d, i) => `<tr><td>${esc(fmtDay(d.date))}</td>${fields.map(f =>
+              `<td><input type="number" id="wx-${i}-${f}" data-i="${i}" data-f="${f}" value="${d[f]}" min="0" max="${f === "prob" || f === "rh" ? 100 : 60}" aria-label="${t(f)} ${esc(fmtDay(d.date))}"></td>`).join("")}</tr>`).join("")}</tbody>
+          </table></div></div>
+      </div>`;
+    renderWeatherResults();
+  }
+
+  function renderWeatherResults() {
+    const days = S.forecast.days;
+    $("#dayCards").innerHTML = days.map((d, i) => {
+      const v = Engine.sprayVerdict(d, days[i + 1]);
+      return `<div class="day ${v.level}">
+        <div><div class="d">${esc(fmtDay(d.date))}</div><div class="t">${d.tmax}°/${d.tmin}° · ${d.rain} mm · ${d.wind} km/h</div></div>
+        <div class="v ${v.level}">${t("v_" + v.level)}</div>
+        <div class="why">${t("r_" + v.reason)}</div></div>`;
+    }).join("");
+    const tips = Engine.fieldTips(days, S.crop);
+    $("#tips").innerHTML = tips.map(tp => `<li><span class="dot ${tp.sev}"></span><span>${esc(t("t_" + tp.key, { day: tp.day ? fmtDay(tp.day) : "" }))}</span></li>`).join("");
+  }
+
+  /* ---------- 3. Fertilizer ---------- */
+  function npk() { return S.npk[S.crop] || { ...NPK_HA[S.crop] }; }
+
+  function renderFert() {
+    const v = npk();
+    $("#p-fert").innerHTML = `
+      <h2>${t("fTitle")} · ${esc(nm(CROPS[S.crop]))}, <span class="num">${S.acres}</span> ${S.lang === "te" ? "ఎకరాలు" : "acres"}</h2>
+      <p class="hint">${t("fHint")}</p>
+      <div class="cols">
+        <div class="card">
+          <h3>${t("perHa")}</h3>
+          <div class="npk">${["n", "p", "k"].map(x =>
+            `<label class="f"><span>${t(x)}</span><input type="number" id="npk-${x}" data-x="${x}" min="0" max="400" value="${v[x]}"></label>`).join("")}</div>
+          <button class="link" id="npkReset" type="button">${t("reset")}</button>
+          <div class="splits"><b>${t("when")}:</b> ${esc(NPK_HA[S.crop].splits)}</div>
+        </div>
+        <div class="card" id="fertOut"></div>
+      </div>`;
+    renderFertResults();
+  }
+
+  function renderFertResults() {
+    const r = Engine.fertilizer(npk(), S.acres);
+    $("#fertOut").innerHTML = `
+      <div class="scroll"><table>
+        <thead><tr><th>${t("product")}</th><th class="r">${t("kg")}</th><th class="r">${t("bags")}</th><th class="r">${t("cost")}</th></tr></thead>
+        <tbody>${r.items.map(i => `<tr><td>${t(i.key)}</td><td class="r num">${i.kg.toFixed(1)}</td>
+          <td class="r num"><b>${i.buyBags}</b> <span class="muted">(${i.bags.toFixed(2)} × ${PRODUCTS[i.key].bag} kg)</span></td><td class="r num">₹${inr(i.cost)}</td></tr>`).join("")}
+          <tr class="total"><td>${t("total")}</td><td></td><td></td><td class="r num">₹${inr(r.total)}</td></tr></tbody>
+      </table></div>
+      <p class="muted" style="font-size:.8rem;margin:12px 0 0">${t("fNote")}</p>`;
+  }
+
+  /* ---------- 4. Mandi ---------- */
+  function spark(series) {
+    const w = 84, h = 26, min = Math.min(...series), max = Math.max(...series), span = max - min || 1;
+    const pts = series.map((v, i) => [2 + i * (w - 4) / (series.length - 1), h - 3 - (v - min) / span * (h - 6)]);
+    const last = pts[pts.length - 1];
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="var(--leaf)" stroke-width="1.6"/><circle cx="${last[0]}" cy="${last[1]}" r="2.6" fill="var(--turmeric)"/></svg>`;
+  }
+
+  function renderMandi() {
+    $("#p-mandi").innerHTML = `
+      <h2>${t("mTitle")} · ${esc(nm(CROPS[S.crop]))}</h2>
+      <p class="hint"><span class="chip sample">${t("sample")}</span> ${t("mHint")}</p>
+      <div class="cols">
+        <div class="card">
+          <div class="inputs">
+            <label class="f"><span>${t("qty")}</span><input type="number" id="qty" min="1" max="5000" value="${S.qty}"></label>
+            <label class="f"><span>${t("rate")}</span><input type="number" id="rate" min="0" max="10" step="0.1" value="${S.rate}"></label>
+          </div>
+          <div id="bestBox" style="margin-top:16px"></div>
+        </div>
+        <div class="card scroll" id="mandiTable" style="padding:6px 10px"></div>
+      </div>`;
+    renderMandiResults();
+  }
+
+  function renderMandiResults() {
+    const r = Engine.bestMarket(S.crop, S.district, S.qty, S.rate);
+    const mk = m => esc(nm(DISTRICTS[m]) === DISTRICTS[m].en ? DISTRICTS[m].market : nm(DISTRICTS[m]));
+    $("#bestBox").innerHTML = `
+      <div class="best"><span class="chip sample" style="justify-self:start">${t("best")}</span>
+        <div class="dx-name">${mk(r.best.market)}</div>
+        <div class="big num">₹${inr(r.best.net)}<span class="muted" style="font-size:.9rem"> / qtl</span></div>
+        <p style="margin:4px 0 0">${t("bestLine", { qty: S.qty, market: mk(r.best.market), total: inr(r.best.netTotal) })}</p></div>
+      <div class="mspbox"><span class="muted">${t("msp")}</span><span class="num"><b>${r.msp ? "₹" + inr(r.msp) : t("noMsp")}</b></span></div>
+      ${r.mspAdvice ? `<div class="alert">${t("mspAlert", { gap: inr(r.mspAdvice.gapPerQtl), qty: S.qty, where: nm(PROCURER[S.crop]), extra: inr(r.mspAdvice.extra) })}</div>` : ""}`;
+    $("#mandiTable").innerHTML = `<table>
+      <thead><tr><th>${t("market")}</th><th class="r">${t("modal")}</th><th>${t("trend")}</th><th class="r">${t("km")}</th><th class="r">${t("net")}</th></tr></thead>
+      <tbody>${r.rows.map((row, i) => `<tr class="${i === 0 ? "top" : ""}">
+        <td>${mk(row.market)}${r.msp ? `<br><span class="tag ${row.belowMsp ? "below" : "above"}">${t(row.belowMsp ? "belowMsp" : "aboveMsp")}</span>` : ""}</td>
+        <td class="r num">₹${inr(row.modal)}<br><span class="${row.change >= 0 ? "up" : "down"}" style="font-size:.75rem">${row.change >= 0 ? "▲" : "▼"} ${inr(Math.abs(row.change))}</span></td>
+        <td>${spark(row.series)}</td>
+        <td class="r num">${row.km} km</td>
+        <td class="r num"><b>₹${inr(row.net)}</b></td></tr>`).join("")}</tbody></table>`;
+  }
+
+  /* ---------- wiring ---------- */
+  const PANELS = { doctor: renderDoctor, weather: renderWeather, fert: renderFert, mandi: renderMandi };
+  function renderAll() { renderStatic(); renderTabs(); Object.values(PANELS).forEach(f => f()); }
+
+  document.addEventListener("click", e => {
+    const tab = e.target.closest("[data-tab]");
+    if (tab) { S.tab = tab.dataset.tab; renderTabs(); window.scrollTo({ top: 0 }); return; }
+    const sym = e.target.closest("[data-sym]");
+    if (sym) { const p = picked(), id = sym.dataset.sym; p.has(id) ? p.delete(id) : p.add(id);
+      sym.setAttribute("aria-pressed", p.has(id)); $(".symhead .num").textContent = `${p.size} / ${SYMPTOMS[S.crop].length}`; renderDiagnosis(); return; }
+    if (e.target.id === "clearSym") { picked().clear(); renderDoctor(); return; }
+    if (e.target.id === "npkReset") { delete S.npk[S.crop]; renderFert(); return; }
+    if (e.target.id === "lang") { S.lang = S.lang === "en" ? "te" : "en"; save(); renderAll(); }
+  });
+
+  document.addEventListener("input", e => {
+    const el = e.target;
+    if (el.dataset.f !== undefined && el.dataset.i !== undefined) {
+      const v = parseFloat(el.value); if (isNaN(v)) return;
+      S.forecast.days[+el.dataset.i][el.dataset.f] = v; renderWeatherResults(); return;
+    }
+    if (el.dataset.x) { const v = parseFloat(el.value); if (isNaN(v) || v < 0) return;
+      S.npk[S.crop] = { ...npk(), [el.dataset.x]: v }; renderFertResults(); return; }
+    if (el.id === "qty" || el.id === "rate") { const v = parseFloat(el.value); if (isNaN(v) || v < 0) return;
+      S[el.id] = v; renderMandiResults(); return; }
+    if (el.id === "acres") { const v = parseFloat(el.value); if (isNaN(v) || v <= 0) return; S.acres = v; save(); renderFert(); }
+  });
+
+  document.addEventListener("change", e => {
+    if (e.target.id === "crop") { S.crop = e.target.value; save(); Object.values(PANELS).forEach(f => f()); }
+    if (e.target.id === "district") { S.district = e.target.value; save(); renderWeather(); renderMandi(); }
+  });
+
+  /* Demo starts with two signs picked so the Crop Doctor shows a result straight away */
+  if (S.crop === "paddy") S.picked.paddy = new Set(["p_spindle", "humid"]);
+  renderAll();
+})();
+</script>
