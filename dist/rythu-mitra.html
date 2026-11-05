@@ -19,8 +19,8 @@
   --ok: #1E7A3E;  --ok-soft: #E1F2E6;
   --warn: #9A5B00; --warn-soft: #FCEFD8;
   --bad: #B3261E;  --bad-soft: #FBE4E1;
-  --display: "Baloo Tammudu 2", "Noto Sans Telugu", system-ui, sans-serif;
-  --body: "Noto Sans", "Noto Sans Telugu", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Baloo Tammudu 2", "Noto Sans Telugu", "Nirmala UI", Gautami, system-ui, sans-serif;
+  --body: "Noto Sans", "Noto Sans Telugu", "Nirmala UI", Gautami, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --r: 12px;
 }
@@ -133,13 +133,15 @@ h3 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 
 .big { font-family: var(--mono); font-size: 1.9rem; font-weight: 600; line-height: 1; }
 td.r, th.r { text-align: right; }
 tr.total td { font-weight: 700; border-bottom: 0; }
+.fert td { vertical-align: top; }
+.fert .sub { font-size: .75rem; }
 .splits { background: var(--leaf-soft); border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: .9rem; }
 
 /* Mandi */
 .inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .best { display: grid; gap: 4px; }
 .best .big { color: var(--leaf); }
-tr.top td { background: var(--leaf-soft); font-weight: 600; }
+tr.best-row td { background: var(--leaf-soft); color: var(--ink); font-weight: 600; }
 .tag { font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
 .tag.below { background: var(--bad-soft); color: var(--bad); } .tag.above { background: var(--ok-soft); color: var(--ok); }
 .alert { background: var(--bad-soft); color: var(--ink); border-left: 4px solid var(--bad); border-radius: 8px; padding: 12px 14px; margin-top: 14px; }
@@ -155,8 +157,17 @@ footer { color: var(--muted); font-size: .8rem; padding-block: 18px 90px; border
   .season { grid-column: 1 / -1; text-align: center; }
   .cols, .wxgrid { grid-template-columns: minmax(0, 1fr); }
   .days { grid-template-columns: minmax(0, 1fr); }
-  .day { grid-template-columns: 76px 1fr; align-items: center; column-gap: 12px; }
-  .day .why { grid-column: 2; }
+  .day { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; }
+  .day .v { padding: 5px 10px; }
+  .day .why { grid-column: 1 / -1; }
+  .mandi { font-size: .82rem; }
+  .mandi th, .mandi td { padding: 8px 4px; }
+  .mandi th, .mandi td:first-child { white-space: normal; }
+  .mandi th:nth-child(3), .mandi td:nth-child(3) { display: none; }
+  .fert { font-size: .82rem; }
+  .fert th, .fert td { padding: 8px 4px; }
+  .fert th, .fert td:first-child { white-space: normal; }
+  .fert .sub { font-size: .68rem; }
   .tabs { position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
           padding: 4px max(4px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(4px, env(safe-area-inset-left, 0px)); gap: 0; }
   .tab { flex: 1; flex-direction: column; gap: 2px; font-size: .68rem; padding: 6px 2px; border-bottom: 0; border-top: 3px solid transparent; text-align: center; }
@@ -867,10 +878,10 @@ footer { color: var(--muted); font-size: .8rem; padding-block: 18px 90px; border
   function renderFertResults() {
     const r = Engine.fertilizer(npk(), S.acres);
     $("#fertOut").innerHTML = `
-      <div class="scroll"><table>
+      <div class="scroll"><table class="fert">
         <thead><tr><th>${t("product")}</th><th class="r">${t("kg")}</th><th class="r">${t("bags")}</th><th class="r">${t("cost")}</th></tr></thead>
         <tbody>${r.items.map(i => `<tr><td>${t(i.key)}</td><td class="r num">${i.kg.toFixed(1)}</td>
-          <td class="r num"><b>${i.buyBags}</b> <span class="muted">(${i.bags.toFixed(2)} × ${PRODUCTS[i.key].bag} kg)</span></td><td class="r num">₹${inr(i.cost)}</td></tr>`).join("")}
+          <td class="r num"><b>${i.buyBags}</b><br><span class="muted sub">${i.bags.toFixed(2)} × ${PRODUCTS[i.key].bag} kg</span></td><td class="r num">₹${inr(i.cost)}</td></tr>`).join("")}
           <tr class="total"><td>${t("total")}</td><td></td><td></td><td class="r num">₹${inr(r.total)}</td></tr></tbody>
       </table></div>
       <p class="muted" style="font-size:.8rem;margin:12px 0 0">${t("fNote")}</p>`;
@@ -911,9 +922,9 @@ footer { color: var(--muted); font-size: .8rem; padding-block: 18px 90px; border
         <p style="margin:4px 0 0">${t("bestLine", { qty: S.qty, market: mk(r.best.market), total: inr(r.best.netTotal) })}</p></div>
       <div class="mspbox"><span class="muted">${t("msp")}</span><span class="num"><b>${r.msp ? "₹" + inr(r.msp) : t("noMsp")}</b></span></div>
       ${r.mspAdvice ? `<div class="alert">${t("mspAlert", { gap: inr(r.mspAdvice.gapPerQtl), qty: S.qty, where: nm(PROCURER[S.crop]), extra: inr(r.mspAdvice.extra) })}</div>` : ""}`;
-    $("#mandiTable").innerHTML = `<table>
+    $("#mandiTable").innerHTML = `<table class="mandi">
       <thead><tr><th>${t("market")}</th><th class="r">${t("modal")}</th><th>${t("trend")}</th><th class="r">${t("km")}</th><th class="r">${t("net")}</th></tr></thead>
-      <tbody>${r.rows.map((row, i) => `<tr class="${i === 0 ? "top" : ""}">
+      <tbody>${r.rows.map((row, i) => `<tr class="${i === 0 ? "best-row" : ""}">
         <td>${mk(row.market)}${r.msp ? `<br><span class="tag ${row.belowMsp ? "below" : "above"}">${t(row.belowMsp ? "belowMsp" : "aboveMsp")}</span>` : ""}</td>
         <td class="r num">₹${inr(row.modal)}<br><span class="${row.change >= 0 ? "up" : "down"}" style="font-size:.75rem">${row.change >= 0 ? "▲" : "▼"} ${inr(Math.abs(row.change))}</span></td>
         <td>${spark(row.series)}</td>

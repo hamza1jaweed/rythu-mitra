@@ -157,10 +157,10 @@
   function renderFertResults() {
     const r = Engine.fertilizer(npk(), S.acres);
     $("#fertOut").innerHTML = `
-      <div class="scroll"><table>
+      <div class="scroll"><table class="fert">
         <thead><tr><th>${t("product")}</th><th class="r">${t("kg")}</th><th class="r">${t("bags")}</th><th class="r">${t("cost")}</th></tr></thead>
         <tbody>${r.items.map(i => `<tr><td>${t(i.key)}</td><td class="r num">${i.kg.toFixed(1)}</td>
-          <td class="r num"><b>${i.buyBags}</b> <span class="muted">(${i.bags.toFixed(2)} × ${PRODUCTS[i.key].bag} kg)</span></td><td class="r num">₹${inr(i.cost)}</td></tr>`).join("")}
+          <td class="r num"><b>${i.buyBags}</b><br><span class="muted sub">${i.bags.toFixed(2)} × ${PRODUCTS[i.key].bag} kg</span></td><td class="r num">₹${inr(i.cost)}</td></tr>`).join("")}
           <tr class="total"><td>${t("total")}</td><td></td><td></td><td class="r num">₹${inr(r.total)}</td></tr></tbody>
       </table></div>
       <p class="muted" style="font-size:.8rem;margin:12px 0 0">${t("fNote")}</p>`;
@@ -201,9 +201,9 @@
         <p style="margin:4px 0 0">${t("bestLine", { qty: S.qty, market: mk(r.best.market), total: inr(r.best.netTotal) })}</p></div>
       <div class="mspbox"><span class="muted">${t("msp")}</span><span class="num"><b>${r.msp ? "₹" + inr(r.msp) : t("noMsp")}</b></span></div>
       ${r.mspAdvice ? `<div class="alert">${t("mspAlert", { gap: inr(r.mspAdvice.gapPerQtl), qty: S.qty, where: nm(PROCURER[S.crop]), extra: inr(r.mspAdvice.extra) })}</div>` : ""}`;
-    $("#mandiTable").innerHTML = `<table>
+    $("#mandiTable").innerHTML = `<table class="mandi">
       <thead><tr><th>${t("market")}</th><th class="r">${t("modal")}</th><th>${t("trend")}</th><th class="r">${t("km")}</th><th class="r">${t("net")}</th></tr></thead>
-      <tbody>${r.rows.map((row, i) => `<tr class="${i === 0 ? "top" : ""}">
+      <tbody>${r.rows.map((row, i) => `<tr class="${i === 0 ? "best-row" : ""}">
         <td>${mk(row.market)}${r.msp ? `<br><span class="tag ${row.belowMsp ? "below" : "above"}">${t(row.belowMsp ? "belowMsp" : "aboveMsp")}</span>` : ""}</td>
         <td class="r num">₹${inr(row.modal)}<br><span class="${row.change >= 0 ? "up" : "down"}" style="font-size:.75rem">${row.change >= 0 ? "▲" : "▼"} ${inr(Math.abs(row.change))}</span></td>
         <td>${spark(row.series)}</td>
